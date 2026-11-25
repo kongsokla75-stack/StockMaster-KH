@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventory & Stock Management | ប្រព័ន្ធគ្រប់គ្រងស្តុកទំនិញ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kantumruy+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+    }
+    .khmer-font {
+      font-family: 'Kantumruy Pro', 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+  <div class="min-h-screen flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col justify-between shrink-0">
+      <div>
+        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+          <div>
+            <h1 class="text-lg font-bold tracking-tight text-emerald-400" data-i18n="appTitle">StockMaster KH</h1>
+            <p class="text-xs text-slate-400" data-i18n="appSubtitle">Inventory Management</p>
+          </div>
+        </div>
+
+        <nav class="p-3 space-y-1" id="navMenu">
+          <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-emerald-600 text-white transition">
+            <span>📊</span>
+            <span data-i18n="navDashboard">Dashboard</span>
+          </button>
+          <button onclick="switchTab('items')" data-tab="items" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+            <span>📦</span>
+            <span data-i18n="navItems">Item List</span>
+          </button>
+          <button onclick="switchTab('stock')" data-tab="stock" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+            <span>🏭</span>
+            <span data-i18n="navStock">Stock Balance</span>
+          </button>
+          <button onclick="switchTab('purchases')" data-tab="purchases" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+            <span>📥</span>
+            <span data-i18n="navPurchases">Item Purchases</span>
+          </button>
+          <button onclick="switchTab('sales')" data-tab="sales" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+            <span>📤</span>
+            <span data-i18n="navSales">Item Sold</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="p-4 border-t border-slate-800 text-xs text-slate-400">
+        <p data-i18n="footerNote">4-Table Relational Prototype</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+      <!-- Top Bar -->
+      <header class="bg-white border-b border-slate-200 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 id="pageTitle" class="text-xl font-bold text-slate-800" data-i18n="navDashboard">Dashboard</h2>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Language Toggle -->
+          <div class="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-1">
+            <button onclick="setLanguage('en')" id="btnEn" class="px-3 py-1 rounded-md text-xs font-semibold bg-white text-slate-900 shadow-sm transition">
+              English
+            </button>
+            <button onclick="setLanguage('km')" id="btnKm" class="px-3 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 transition khmer-font">
+              ភាសាខ្មែរ
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Workspace -->
+      <main class="p-6 flex-1 space-y-6">
+
+        <!-- 1. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-section space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <p class="text-xs font-medium text-slate-500 uppercase" data-i18n="kpiTotalItems">Total Catalog Items</p>
+              <p id="kpiItemsCount" class="text-2xl font-bold text-slate-800 mt-1">0</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <p class="text-xs font-medium text-slate-500 uppercase" data-i18n="kpiStockValue">Total Stock Value</p>
+              <p id="kpiStockVal" class="text-2xl font-bold text-emerald-600 mt-1">$0.00</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <p class="text-xs font-medium text-slate-500 uppercase" data-i18n="kpiTotalSales">Total Sales Revenue</p>
+              <p id="kpiSalesVal" class="text-2xl font-bold text-blue-600 mt-1">$0.00</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <p class="text-xs font-medium text-slate-500 uppercase" data-i18n="kpiLowStock">Low Stock Alerts</p>
+              <p id="kpiLowStockCount" class="text-2xl font-bold text-amber-600 mt-1">0</p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-slate-800" data-i18n="quickOverview">Current Stock Overview</h3>
+              <div class="flex gap-2">
+                <button onclick="openModal('purchaseModal')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition" data-i18n="btnRecordPurchase">+ Purchase</button>
+                <button onclick="openModal('saleModal')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition" data-i18n="btnRecordSale">+ Sale</button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="border-b border-slate-200 text-slate-500 text-xs uppercase">
+                    <th class="py-3 px-4" data-i18n="colSku">SKU</th>
+                    <th class="py-3 px-4" data-i18n="colItemName">Item Name</th>
+                    <th class="py-3 px-4" data-i18n="colInStock">In Stock</th>
+                    <th class="py-3 px-4" data-i18n="colStatus">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardStockTable" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. ITEM LIST TABLE VIEW -->
+        <section id="view-items" class="view-section hidden space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <input type="text" id="searchItemInput" onkeyup="renderAll()" placeholder="Search SKU or Name..." class="px-4 py-2 border border-slate-300 rounded-lg text-sm w-full sm:w-72 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <button onclick="openModal('itemModal')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-lg transition" data-i18n="btnAddItem">+ Add New Item</button>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase">
+                <tr>
+                  <th class="py-3 px-4" data-i18n="colSku">SKU</th>
+                  <th class="py-3 px-4" data-i18n="colNameEn">Name (EN)</th>
+                  <th class="py-3 px-4" data-i18n="colNameKm">Name (KH)</th>
+                  <th class="py-3 px-4" data-i18n="colCategory">Category</th>
+                  <th class="py-3 px-4" data-i18n="colCostPrice">Cost Price</th>
+                  <th class="py-3 px-4" data-i18n="colSellPrice">Sell Price</th>
+                </tr>
+              </thead>
+              <tbody id="itemsTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 3. STOCK ITEM TABLE VIEW -->
+        <section id="view-stock" class="view-section hidden space-y-4">
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase">
+                <tr>
+                  <th class="py-3 px-4" data-i18n="colSku">SKU</th>
+                  <th class="py-3 px-4" data-i18n="colItemName">Item Name</th>
+                  <th class="py-3 px-4" data-i18n="colPurchasedQty">Total Purchased</th>
+                  <th class="py-3 px-4" data-i18n="colSoldQty">Total Sold</th>
+                  <th class="py-3 px-4" data-i18n="colInStock">Available Stock</th>
+                  <th class="py-3 px-4" data-i18n="colReorderLevel">Reorder Level</th>
+                  <th class="py-3 px-4" data-i18n="colStatus">Status</th>
+                </tr>
+              </thead>
+              <tbody id="stockTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 4. ITEM PURCHASE TABLE VIEW -->
+        <section id="view-purchases" class="view-section hidden space-y-4">
+          <div class="flex justify-end">
+            <button onclick="openModal('purchaseModal')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg transition" data-i18n="btnRecordPurchase">+ Record Purchase</button>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase">
+                <tr>
+                  <th class="py-3 px-4" data-i18n="colPoNo">PO #</th>
+                  <th class="py-3 px-4" data-i18n="colDate">Date</th>
+                  <th class="py-3 px-4" data-i18n="colSupplier">Supplier</th>
+                  <th class="py-3 px-4" data-i18n="colItemName">Item Name</th>
+                  <th class="py-3 px-4" data-i18n="colQty">Qty</th>
+                  <th class="py-3 px-4" data-i18n="colUnitCost">Unit Cost</th>
+                  <th class="py-3 px-4" data-i18n="colTotal">Total</th>
+                </tr>
+              </thead>
+              <tbody id="purchasesTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 5. ITEM SOLD TABLE VIEW -->
+        <section id="view-sales" class="view-section hidden space-y-4">
+          <div class="flex justify-end">
+            <button onclick="openModal('saleModal')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition" data-i18n="btnRecordSale">+ Record Sale</button>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase">
+                <tr>
+                  <th class="py-3 px-4" data-i18n="colInvNo">Invoice #</th>
+                  <th class="py-3 px-4" data-i18n="colDate">Date</th>
+                  <th class="py-3 px-4" data-i18n="colCustomer">Customer</th>
+                  <th class="py-3 px-4" data-i18n="colItemName">Item Name</th>
+                  <th class="py-3 px-4" data-i18n="colQty">Qty</th>
+                  <th class="py-3 px-4" data-i18n="colSellPrice">Unit Price</th>
+                  <th class="py-3 px-4" data-i18n="colTotal">Total</th>
+                </tr>
+              </thead>
+              <tbody id="salesTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD NEW ITEM -->
+  <div id="itemModal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+      <h3 class="text-lg font-bold text-slate-800" data-i18n="modalAddItemTitle">Add New Item</h3>
+      <form onsubmit="handleAddItem(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colSku">SKU</label>
+          <input type="text" id="newSku" required placeholder="ITM-004" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colNameEn">Name (English)</label>
+          <input type="text" id="newNameEn" required placeholder="Wireless Mouse" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colNameKm">Name (Khmer)</label>
+          <input type="text" id="newNameKm" required placeholder="ម៉ៅឥតខ្សែ" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm khmer-font">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colCostPrice">Cost Price ($)</label>
+            <input type="number" step="0.01" id="newCost" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colSellPrice">Sell Price ($)</label>
+            <input type="number" step="0.01" id="newSell" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colReorderLevel">Reorder Alert Level</label>
+          <input type="number" id="newReorder" value="5" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+        </div>
+        <div class="flex justify-end gap-2 pt-3">
+          <button type="button" onclick="closeModal('itemModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg" data-i18n="btnCancel">Cancel</button>
+          <button type="submit" class="px-4 py-2 text-sm bg-slate-900 text-white font-semibold rounded-lg" data-i18n="btnSave">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: RECORD PURCHASE -->
+  <div id="purchaseModal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+      <h3 class="text-lg font-bold text-slate-800" data-i18n="modalPurchaseTitle">Record Item Purchase (Stock-In)</h3>
+      <form onsubmit="handleAddPurchase(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colItemName">Select Item</label>
+          <select id="purchaseItemSelect" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colSupplier">Supplier Name</label>
+          <input type="text" id="purchaseSupplier" required placeholder="Phnom Penh Tech Supply" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colQty">Quantity</label>
+            <input type="number" min="1" id="purchaseQty" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colUnitCost">Unit Cost ($)</label>
+            <input type="number" step="0.01" id="purchaseCost" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-3">
+          <button type="button" onclick="closeModal('purchaseModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg" data-i18n="btnCancel">Cancel</button>
+          <button type="submit" class="px-4 py-2 text-sm bg-emerald-600 text-white font-semibold rounded-lg" data-i18n="btnSave">Save Purchase</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: RECORD SALE -->
+  <div id="saleModal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+      <h3 class="text-lg font-bold text-slate-800" data-i18n="modalSaleTitle">Record Item Sold (Stock-Out)</h3>
+      <form onsubmit="handleAddSale(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colItemName">Select Item</label>
+          <select id="saleItemSelect" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colCustomer">Customer Name</label>
+          <input type="text" id="saleCustomer" required placeholder="Walk-in Customer" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colQty">Quantity</label>
+            <input type="number" min="1" id="saleQty" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="colSellPrice">Unit Price ($)</label>
+            <input type="number" step="0.01" id="salePrice" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm">
+          </div>
+        </div>
+        <p id="saleError" class="text-xs text-red-600 font-semibold hidden"></p>
+        <div class="flex justify-end gap-2 pt-3">
+          <button type="button" onclick="closeModal('saleModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg" data-i18n="btnCancel">Cancel</button>
+          <button type="submit" class="px-4 py-2 text-sm bg-blue-600 text-white font-semibold rounded-lg" data-i18n="btnSave">Complete Sale</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // --- 1. TRANSLATION DICTIONARY (EN / KM) ---
+    const translations = {
+      en: {
+        appTitle: "StockMaster KH",
+        appSubtitle: "Inventory Management",
+        navDashboard: "Dashboard",
+        navItems: "Item List",
+        navStock: "Stock Balance",
+        navPurchases: "Item Purchases",
+        navSales: "Item Sold",
+        footerNote: "4-Table Relational Prototype",
+        kpiTotalItems: "Total Catalog Items",
+        kpiStockValue: "Total Stock Value",
+        kpiTotalSales: "Total Sales Revenue",
+        kpiLowStock: "Low Stock Alerts",
+        quickOverview: "Current Stock Overview",
+        btnRecordPurchase: "+ Record Purchase",
+        btnRecordSale: "+ Record Sale",
+        btnAddItem: "+ Add New Item",
+        btnCancel: "Cancel",
+        btnSave: "Save",
+        colSku: "SKU",
+        colItemName: "Item Name",
+        colNameEn: "Name (EN)",
+        colNameKm: "Name (KH)",
+        colCategory: "Category",
+        colCostPrice: "Cost Price",
+        colSellPrice: "Sell Price",
+        colInStock: "In Stock",
+        colPurchasedQty: "Total Purchased",
+        colSoldQty: "Total Sold",
+        colReorderLevel: "Reorder Level",
+        colStatus: "Status",
+        colPoNo: "PO #",
+        colInvNo: "Invoice #",
+        colDate: "Date",
+        colSupplier: "Supplier",
+        colCustomer: "Customer",
+        colQty: "Qty",
+        colUnitCost: "Unit Cost",
+        colTotal: "Total",
+        statusHealthy: "In Stock",
+        statusLow: "Low Stock",
+        statusOut: "Out of Stock",
+        modalAddItemTitle: "Add New Item",
+        modalPurchaseTitle: "Record Item Purchase (Stock-In)",
+        modalSaleTitle: "Record Item Sold (Stock-Out)",
+        errInsufficientStock: "Insufficient stock available for this sale!"
+      },
+      km: {
+        appTitle: "ប្រព័ន្ធគ្រប់គ្រងស្តុក",
+        appSubtitle: "ការគ្រប់គ្រងទំនិញ និងការលក់",
+        navDashboard: "ផ្ទាំងគ្រប់គ្រង",
+        navItems: "បញ្ជីមុខទំនិញ",
+        navStock: "ស្តុកទំនិញ",
+        navPurchases: "ការទិញចូលស្តុក",
+        navSales: "ការលក់ចេញ",
+        footerNote: "គំរូប្រព័ន្ធតារាងទំនាក់ទំនងទាំង ៤",
+        kpiTotalItems: "មុខទំនិញសរុប",
+        kpiStockValue: "តម្លៃស្តុកសរុប",
+        kpiTotalSales: "ចំណូលពីការលក់សរុប",
+        kpiLowStock: "ទំនិញជិតអស់ពីស្តុក",
+        quickOverview: "ទិដ្ឋភាពទូទៅនៃស្តុកបច្ចុប្បន្ន",
+        btnRecordPurchase: "+ កត់ត្រាការទិញចូល",
+        btnRecordSale: "+ កត់ត្រាការលក់ចេញ",
+        btnAddItem: "+ បន្ថែមមុខទំនិញថ្មី",
+        btnCancel: "បោះបង់",
+        btnSave: "រក្សាទុក",
+        colSku: "លេខកូដ (SKU)",
+        colItemName: "ឈ្មោះទំនិញ",
+        colNameEn: "ឈ្មោះ (អង់គ្លេស)",
+        colNameKm: "ឈ្មោះ (ខ្មែរ)",
+        colCategory: "ប្រភេទ",
+        colCostPrice: "តម្លៃដើម",
+        colSellPrice: "តម្លៃលក់",
+        colInStock: "ស្តុកនៅសល់",
+        colPurchasedQty: "ទិញចូលសរុប",
+        colSoldQty: "លក់ចេញសរុប",
+        colReorderLevel: "កម្រិតត្រូវបញ្ជាទិញ",
+        colStatus: "ស្ថានភាព",
+        colPoNo: "លេខបញ្ជាទិញ",
+        colInvNo: "លេខវិក្កយបត្រ",
+        colDate: "កាលបរិច្ឆេទ",
+        colSupplier: "អ្នកផ្គត់ផ្គង់",
+        colCustomer: "អតិថិជន",
+        colQty: "បរិមាណ",
+        colUnitCost: "តម្លៃឯកតា",
+        colTotal: "សរុប",
+        statusHealthy: "មានក្នុងស្តុក",
+        statusLow: "ជិតអស់ស្តុក",
+        statusOut: "អស់ពីស្តុក",
+        modalAddItemTitle: "បន្ថែមមុខទំនិញថ្មី",
+        modalPurchaseTitle: "កត់ត្រាការទិញទំនិញចូលស្តុក",
+        modalSaleTitle: "កត់ត្រាការលក់ទំនិញចេញ",
+        errInsufficientStock: "ចំនួនទំនិញក្នុងស្តុកមិនគ្រប់គ្រាន់សម្រាប់ការលក់នេះទេ!"
+      }
+    };
+
+    let currentLang = 'en';
+    let activeTab = 'dashboard';
+
+    // --- 2. INITIAL SAMPLE DATA (4 RELATIONAL TABLES) ---
+    let itemsTable = [
+      { id: 1, sku: 'ITM-001', nameEn: 'Jasmine Rice (25kg)', nameKm: 'អង្ករផ្កាម្លិះ (២៥គីឡូ)', category: 'Food', costPrice: 18.00, sellPrice: 22.50, reorderLevel: 10 },
+      { id: 2, sku: 'ITM-002', nameEn: 'Cooking Oil (5L)', nameKm: 'ប្រេងឆា (៥លីត្រ)', category: 'Grocery', costPrice: 6.50, sellPrice: 8.00, reorderLevel: 15 },
+      { id: 3, sku: 'ITM-003', nameEn: 'Krama Scarf (Cotton)', nameKm: 'ក្រមាខ្មែរ (កប្បាស)', category: 'Apparel', costPrice: 3.00, sellPrice: 5.50, reorderLevel: 8 }
+    ];
+
+    let purchasesTable = [
+      { id: 101, poNo: 'PO-2026-01', date: '2026-11-20', supplier: 'Battambang Mills', itemId: 1, qty: 30, unitCost: 18.00 },
+      { id: 102, poNo: 'PO-2026-02', date: '2026-11-21', supplier: 'Mekong Trading', itemId: 2, qty: 20, unitCost: 6.50 },
+      { id: 103, poNo: 'PO-2026-03', date: '2026-11-22', supplier: 'Siem Reap Weavers', itemId: 3, qty: 25, unitCost: 3.00 }
+    ];
+
+    let salesTable = [
+      { id: 201, invNo: 'INV-1001', date: '2026-11-23', customer: 'Sokha Mart', itemId: 1, qty: 12, unitPrice: 22.50 },
+      { id: 202, invNo: 'INV-1002', date: '2026-11-24', customer: 'Dara Minimart', itemId: 2, qty: 14, unitPrice: 8.00 }
+    ];
+
+    // Derived Stock Table (Calculated dynamically from Purchases - Sales)
+    function getStockTable() {
+      return itemsTable.map(item => {
+        const totalPurchased = purchasesTable
+          .filter(p => p.itemId === item.id)
+          .reduce((sum, p) => sum + p.qty, 0);
+        const totalSold = salesTable
+          .filter(s => s.itemId === item.id)
+          .reduce((sum, s) => sum + s.qty, 0);
+        const available = totalPurchased - totalSold;
+        return {
+          ...item,
+          totalPurchased,
+          totalSold,
+          available
+        };
+      });
+    }
+
+    // --- 3. LANGUAGE & NAVIGATION ---
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.getElementById('btnEn').className = lang === 'en'
+        ? 'px-3 py-1 rounded-md text-xs font-semibold bg-white text-slate-900 shadow-sm transition'
+        : 'px-3 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 transition';
+      document.getElementById('btnKm').className = lang === 'km'
+        ? 'px-3 py-1 rounded-md text-xs font-semibold bg-white text-slate-900 shadow-sm transition khmer-font'
+        : 'px-3 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 transition khmer-font';
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+
+      updatePageTitle();
+      renderAll();
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(`view-${tab}`).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tab) {
+          btn.className = 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-emerald-600 text-white transition';
+        } else {
+          btn.className = 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition';
+        }
+      });
+
+      updatePageTitle();
+    }
+
+    function updatePageTitle() {
+      const map = {
+        dashboard: 'navDashboard',
+        items: 'navItems',
+        stock: 'navStock',
+        purchases: 'navPurchases',
+        sales: 'navSales'
+      };
+      document.getElementById('pageTitle').textContent = translations[currentLang][map[activeTab]];
+    }
+
+    // --- 4. RENDERING TABLES & KPIS ---
+    function getItemDisplayName(item) {
+      return currentLang === 'km' ? item.nameKm : item.nameEn;
+    }
+
+    function getStatusBadge(available, reorderLevel) {
+      const t = translations[currentLang];
+      if (available <= 0) {
+        return `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">${t.statusOut}</span>`;
+      } else if (available <= reorderLevel) {
+        return `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">${t.statusLow}</span>`;
+      }
+      return `<span class="px-2.5 py-0.5 rounded-full text-xs font-

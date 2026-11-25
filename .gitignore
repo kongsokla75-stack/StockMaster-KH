@@ -1,0 +1,20 @@
+# Dependencies
+node_modules
+
+# Next.js / build output
+.next
+out
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment secrets — keep .env.example as the template
+.env*
+!.env.example
+
+# Logs and OS/editor files
+npm-debug.log*
+*.log
+.DS_Store
+Thumbs.db
+.idea
+.vscode
