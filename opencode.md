@@ -167,14 +167,15 @@ CHANGELOG.md        Dated work log
 
 - Repo is ready for Vercel GitHub import; `vercel.json` explicitly sets `framework: nextjs`.
 - `package.json` declares `engines.node >= 20.9.0` (required by Next.js 16).
-- Vercel env vars must be set in the dashboard (no `.env.local` in git):
-  - `NEXT_PUBLIC_JWKS_URL` = `https://vdchksognobgiypegmjx.supabase.co/auth/v1/.well-known/jwks.json`
-  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` = the publishable key
-  - or, preferably, `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` (server-only, bypasses RLS)
+- Deployed at `https://khmer-inventory-pos.vercel.app/`.
+- Supabase env vars are defined in `vercel.json` (publishable-safe values, no `.env.local` in git):
+  `NEXT_PUBLIC_JWKS_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Service-role mode would instead
+  use dashboard-only `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`.
 - Publishable-key mode requires the anon grants/policies from `supabase/anon-access.sql` to be
   applied in Supabase, or the deployed page returns `permission denied for table items`.
-- No Vercel CLI/auth in this environment; deployment must be done via the Vercel dashboard or by
-  someone authenticated with the Vercel CLI.
+- `app/api/health/route.ts` is a public diagnostic: reports credential presence (booleans) and row
+  counts. It was used to confirm the 500 was caused by missing Vercel env vars.
+- No Vercel CLI/auth in this environment; deploys happen via GitHub push.
 
 ## Git
 

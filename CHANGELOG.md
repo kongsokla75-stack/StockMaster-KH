@@ -83,6 +83,15 @@ handoff context.
   `README.md` / `opencode.md`.
 - No Vercel CLI/auth in this environment, so the actual deploy is done from the Vercel dashboard.
 
+### Vercel 500 fix
+
+- Deployed site `https://khmer-inventory-pos.vercel.app/` returned HTTP 500.
+- Added `app/api/health/route.ts` to report credential presence and row counts without values.
+- Diagnostic showed all four Supabase env vars were absent on Vercel.
+- Added the two publishable-safe env values to `vercel.json` so Vercel injects them automatically.
+- Verified after redeploy: `/api/health` returns `ok: true` with 3/3/3 rows; `/` returns HTTP 200
+  with seeded items, purchases and sales rendered.
+
 ### Outstanding
 
 - Write actions still target the intended schema (`name_km`, `cost_price`, `sell_price`) and RPCs

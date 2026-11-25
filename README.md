@@ -159,20 +159,18 @@ The repository is ready for Vercel's GitHub integration.
    - **Root Directory:** `./`
    - **Build Command:** `npm run build`
    - **Output Directory:** `.next` (Vercel default — leave blank if not asked)
-3. Add these **Environment Variables** in the Vercel project (Production and Preview):
-
-   | Name | Value |
-   | --- | --- |
-   | `NEXT_PUBLIC_JWKS_URL` | `https://vdchksognobgiypegmjx.supabase.co/auth/v1/.well-known/jwks.json` |
-   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | your `sb_publishable_...` key from Supabase → Project Settings → API |
-
-   Alternatively, use the preferred server-only pair instead of the two above:
-   `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Service role bypasses RLS, so the anon
-   policies are then unnecessary. Never put a service-role key in a `NEXT_PUBLIC_*` variable.
+3. Environment variables are already defined in `vercel.json`:
+   `NEXT_PUBLIC_JWKS_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. These are publishable-safe
+   values, so keeping them in the repo is intentional. If you prefer the server-only service-role
+   mode, add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in the Vercel dashboard instead and
+   remove the two publishable entries from `vercel.json`. Never put a service-role key in a
+   `NEXT_PUBLIC_*` variable.
 4. Click **Deploy**. Vercel installs dependencies with `npm install` and runs `npm run build`.
 5. If using the publishable key, confirm the Supabase anon grants/policies were applied by running
    `supabase/anon-access.sql` in the SQL Editor. Otherwise the deployed app will return
    `permission denied for table items`.
+6. Check `https://<your-deployment>/api/health` — it reports whether credentials are present and
+   counts loaded rows, without exposing any values.
 
 `.env.local` is not in the repo; Vercel environment variables replace it. Database rows are read
 at request time, so no redeploy is needed after changing Supabase data.
