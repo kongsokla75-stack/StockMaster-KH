@@ -4,7 +4,20 @@ A bilingual (English / ខ្មែរ) inventory & stock management dashboard c
 single-file HTML prototype (`StockMaster KH.html`, kept at the repo root as a reference) into a
 Next.js App Router application.
 
-**Last updated: 2026-11-25** — see [`CHANGELOG.md`](CHANGELOG.md) for what was done that day.
+**Last updated: 2026-11-25 20:14 +07:00** — see [`CHANGELOG.md`](CHANGELOG.md) for the dated work log.
+
+### Quick resume
+
+```powershell
+cd "C:\Ai build system\StockMaster KH"
+npm run dev        # http://localhost:3000
+git status -sb     # ## main...origin/main
+```
+
+- GitHub: <https://github.com/kongsokla75-stack/StockMaster-KH>
+- Live app: <https://khmer-inventory-pos.vercel.app/>
+- Health check: <https://khmer-inventory-pos.vercel.app/api/health>
+- Next task: align write actions with the live UUID-based Supabase schema (reads already work).
 
 ## Stack
 

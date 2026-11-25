@@ -5,6 +5,15 @@ handoff context.
 
 ## 2026-11-25
 
+### 20:14 +07:00 — resume summary
+
+- Local dev server restarted and verified: <http://localhost:3000> → HTTP 200 with seeded data.
+- GitHub `main` is clean and in sync with `origin/main`.
+- Vercel site fixed and live: <https://khmer-inventory-pos.vercel.app/> → HTTP 200.
+- `/api/health` reports `ok: true` with 3/3/3 rows and credential presence booleans.
+- `README.md` and `opencode.md` now start with quick-resume blocks for the next session.
+- Top remaining task: align write actions with the live UUID-based Supabase schema.
+
 ### Project state
 
 - Next.js 16 App Router / React 19 / TypeScript / Tailwind 4 conversion of the original

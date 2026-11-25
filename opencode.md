@@ -4,6 +4,28 @@
 that was done on 2026-11-25. See [`README.md`](README.md) for user-facing docs and
 [`CHANGELOG.md`](CHANGELOG.md) for the dated work log.
 
+## QUICK RESUME — updated 2026-11-25 20:14 +07:00
+
+If you are returning to this project, this is the fastest way back in:
+
+```powershell
+cd "C:\Ai build system\StockMaster KH"
+npm run dev                       # http://localhost:3000
+git status -sb                    # should show ## main...origin/main
+git log --oneline -5              # latest commits
+```
+
+**Live today:**
+
+- Local dev server: <http://localhost:3000> — HTTP 200 with seeded data
+- GitHub: <https://github.com/kongsokla75-stack/StockMaster-KH> — `main` pushed, clean tree
+- Vercel: <https://khmer-inventory-pos.vercel.app/> — HTTP 200 (fixed today)
+- Supabase: `vdchksognobgiypegmjx` — publishable-key mode, 3 items / 3 purchases / 3 sales
+- Diagnostic: <https://khmer-inventory-pos.vercel.app/api/health> — returns `ok: true` + row counts
+
+**One thing to remember:** reads work everywhere, but Add Item / Purchase / Sale still target the
+intended `schema.sql` columns/RPCs, not the live UUID-based database. That is the top next task.
+
 ## Current state (as of 2026-11-25)
 
 Converted from the single vanilla HTML file `StockMaster KH.html` (kept at the root as a reference)
