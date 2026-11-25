@@ -163,6 +163,19 @@ CHANGELOG.md        Dated work log
 - Added a translated "no results" message and search placeholder.
 - Rebuilt the truncated script logic, including KPI calculations and all submit handlers.
 
+## Vercel deployment
+
+- Repo is ready for Vercel GitHub import; `vercel.json` explicitly sets `framework: nextjs`.
+- `package.json` declares `engines.node >= 20.9.0` (required by Next.js 16).
+- Vercel env vars must be set in the dashboard (no `.env.local` in git):
+  - `NEXT_PUBLIC_JWKS_URL` = `https://vdchksognobgiypegmjx.supabase.co/auth/v1/.well-known/jwks.json`
+  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` = the publishable key
+  - or, preferably, `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` (server-only, bypasses RLS)
+- Publishable-key mode requires the anon grants/policies from `supabase/anon-access.sql` to be
+  applied in Supabase, or the deployed page returns `permission denied for table items`.
+- No Vercel CLI/auth in this environment; deployment must be done via the Vercel dashboard or by
+  someone authenticated with the Vercel CLI.
+
 ## Git
 
 - Repo initialized on `main` and pushed to

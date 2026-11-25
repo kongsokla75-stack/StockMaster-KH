@@ -75,6 +75,14 @@ handoff context.
 - Initial commit: `99c9d1e Initial commit: StockMaster KH Next.js + Supabase` (amended to `b025645`
   after docs updates; first push completed successfully).
 
+### Vercel preparation
+
+- Added `vercel.json` with `framework: nextjs` for explicit Vercel detection.
+- Added `engines.node >= 20.9.0` to `package.json` (Next.js 16 requirement).
+- Documented Vercel GitHub import, build settings, and required environment variables in
+  `README.md` / `opencode.md`.
+- No Vercel CLI/auth in this environment, so the actual deploy is done from the Vercel dashboard.
+
 ### Outstanding
 
 - Write actions still target the intended schema (`name_km`, `cost_price`, `sell_price`) and RPCs

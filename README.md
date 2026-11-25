@@ -148,6 +148,35 @@ CHANGELOG.md        Dated work log
 2. Add Supabase Auth + RLS before public deployment (anon writes are currently open).
 3. Add linting/automated tests.
 
+## Deploy to Vercel
+
+The repository is ready for Vercel's GitHub integration.
+
+1. In Vercel, choose **Add New → Project** and import
+   `https://github.com/kongsokla75-stack/StockMaster-KH.git`.
+2. Vercel auto-detects Next.js. Confirm:
+   - **Framework Preset:** Next.js
+   - **Root Directory:** `./`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `.next` (Vercel default — leave blank if not asked)
+3. Add these **Environment Variables** in the Vercel project (Production and Preview):
+
+   | Name | Value |
+   | --- | --- |
+   | `NEXT_PUBLIC_JWKS_URL` | `https://vdchksognobgiypegmjx.supabase.co/auth/v1/.well-known/jwks.json` |
+   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | your `sb_publishable_...` key from Supabase → Project Settings → API |
+
+   Alternatively, use the preferred server-only pair instead of the two above:
+   `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Service role bypasses RLS, so the anon
+   policies are then unnecessary. Never put a service-role key in a `NEXT_PUBLIC_*` variable.
+4. Click **Deploy**. Vercel installs dependencies with `npm install` and runs `npm run build`.
+5. If using the publishable key, confirm the Supabase anon grants/policies were applied by running
+   `supabase/anon-access.sql` in the SQL Editor. Otherwise the deployed app will return
+   `permission denied for table items`.
+
+`.env.local` is not in the repo; Vercel environment variables replace it. Database rows are read
+at request time, so no redeploy is needed after changing Supabase data.
+
 ## Git
 
 The repository is on branch `main` and pushed to:
