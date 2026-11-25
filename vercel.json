@@ -1,4 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_JWKS_URL": "https://vdchksognobgiypegmjx.supabase.co/auth/v1/.well-known/jwks.json",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_6Y7nvSX9lov8DsVqvXmZWg_Id2zOxUW"
+  }
 }
