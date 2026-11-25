@@ -165,10 +165,11 @@ CHANGELOG.md        Dated work log
 
 ## Git
 
-- Repo initialized on `main`; initial commit `99c9d1e`.
+- Repo initialized on `main` and pushed to
+  `https://github.com/kongsokla75-stack/StockMaster-KH.git`.
 - `.gitignore` ignores `.env.local` but keeps `.env.example`.
-- Local identity is the placeholder `StockMaster KH <stockmaster@localhost>` — change it before
-  pushing. No remote is configured.
+- Local git identity: `kongsokla75-stack <kongsokla75-stack@users.noreply.github.com>`.
+- `origin/main` tracks the GitHub repository; `git push` is enough for later updates.
 
 ## Possible next steps (not done)
 

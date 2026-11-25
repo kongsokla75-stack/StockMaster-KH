@@ -70,9 +70,10 @@ handoff context.
 
 - Initialized a local git repository on branch `main`.
 - `.gitignore` updated so `.env.local` stays ignored while `.env.example` remains tracked.
-- Repo-local identity set to `StockMaster KH <stockmaster@localhost>` (placeholder; change it
-  before pushing to a shared remote).
-- Initial commit: `99c9d1e Initial commit: StockMaster KH Next.js + Supabase`.
+- Remote added and pushed: `https://github.com/kongsokla75-stack/StockMaster-KH.git` (`origin/main`).
+- Local git identity set to `kongsokla75-stack <kongsokla75-stack@users.noreply.github.com>`.
+- Initial commit: `99c9d1e Initial commit: StockMaster KH Next.js + Supabase` (amended to `b025645`
+  after docs updates; first push completed successfully).
 
 ### Outstanding
 
@@ -80,4 +81,3 @@ handoff context.
   (`record_purchase`, `record_sale`) that are absent from the live database. Reads work; writes
   need alignment or a fresh database created from `supabase/schema.sql`.
 - No Supabase Auth yet; anon writes are public.
-- No git remote configured yet.

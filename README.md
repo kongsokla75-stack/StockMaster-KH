@@ -150,15 +150,24 @@ CHANGELOG.md        Dated work log
 
 ## Git
 
-A local repository is initialized on branch `main`. `.env.local` is ignored (secrets stay local);
-`.env.example` is tracked. The repo-local author is a placeholder — set your real identity before
-pushing:
+The repository is on branch `main` and pushed to:
+
+<https://github.com/kongsokla75-stack/StockMaster-KH.git>
+
+`.env.local` is ignored (secrets stay local); `.env.example` is tracked. After cloning:
 
 ```bash
-git config user.name "Your Name"
-git config user.email "you@example.com"
-git remote add origin <your-repository-url>
-git push -u origin main
+npm install
+cp .env.example .env.local   # then fill in your Supabase values
+npm run dev
+```
+
+Normal workflow:
+
+```bash
+git add .
+git commit -m "your message"
+git push
 ```
 
 ## Conventions
